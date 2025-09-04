@@ -90,7 +90,7 @@ async def merge_from_upload(
                     if total_pages + pages > MAX_PAGES:
                         raise HTTPException(
                             status.HTTP_400_BAD_REQUEST,
-                            detail="Exceeds total page limit: %s "% MAX_PAGES
+                            detail="Exceeds total page limit: %s"% MAX_PAGES
                         )
 
                     for p in reader.pages:
@@ -103,7 +103,7 @@ async def merge_from_upload(
                     if total_pages + 1 > MAX_PAGES:
                         raise HTTPException(
                             status.HTTP_400_BAD_REQUEST,
-                            detail="Exceeds total page limit: %s  "% MAX_PAGES
+                            detail="Exceeds total page limit: %s"% MAX_PAGES
                         )
                     try:
                         img = Image.open(BytesIO(data))
