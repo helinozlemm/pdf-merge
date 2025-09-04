@@ -11,6 +11,7 @@ from PIL import Image, UnidentifiedImageError
 
 
 logging.basicConfig(level = logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+logger = logging.getLogger('PDF-MERGE')
 
 app = FastAPI()
 
@@ -67,7 +68,7 @@ async def merge_from_upload(
             try:
                 data = await f.read()
                 size = len(data) if data else 0
-                logging.info("read: %s bytes=%d", name, size)
+                logger.info("read: %s bytes=%d", name, size)
                 if not data:
                     errors.append({"file": name, "reason": "Empty file"})
                     continue
@@ -82,7 +83,7 @@ async def merge_from_upload(
                     
 
                     pages = len(reader.pages)
-                    logging.info("parsed pdf: %s pages=%d", name, pages)
+                    logger.info("parsed pdf: %s pages=%d", name, pages)
                     if pages == 0:
                         errors.append({"file": name, "reason": "PDF has zero pages"})
                         continue
@@ -95,7 +96,7 @@ async def merge_from_upload(
                     for p in reader.pages:
                         writer.add_page(p)
                         total_pages += pages
-                        logging.info("added pdf: %s (+%d) total=%d", name, pages, total_pages)
+                        logger.info("added pdf: %s (+%d) total=%d", name, pages, total_pages)
 
 
                 else:
@@ -128,14 +129,13 @@ async def merge_from_upload(
             except Exception as e:
                 errors.append({"file": name, "reason": str(e)})
                 continue
-        logging.info("total pages: %s " % total_pages)
+        logger.info("total pages: %s " % total_pages)
         if total_pages == 0:
             raise HTTPException(
                 status_code=400,
                 detail="There are no valid pages to merge.")
 
         out = BytesIO()
-        #merger.write(out)
         writer.write(out)
         out.seek(0)
 
